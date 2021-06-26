@@ -239,8 +239,8 @@ void WaveshareEPaperTypeA::dump_config() {
   LOG_UPDATE_INTERVAL(this);
 }
 void HOT WaveshareEPaperTypeA::display() {
-  bool full_update = this->at_update_ == 0;
-  bool prev_full_update = this->at_update_ == 1;
+  bool full_update = this->at_update_ == this->full_update_every_ - 1;
+  bool prev_full_update = this->at_update_ == 0;
 
   if (!this->wait_until_idle_()) {
     this->status_set_warning();
@@ -1029,8 +1029,8 @@ static const uint8_t PART_UPDATE_LUT_TTGO_DKE[LUT_SIZE_TTGO_DKE_PART] = {
 void WaveshareEPaper2P13InDKE::initialize() {
 }
 void HOT WaveshareEPaper2P13InDKE::display() {
-  bool partial = this->at_update_ != 0;
-  this->at_update_ = (this->at_update_ + 1) % this->full_update_every_;
+  bool partial = this->at_update_ != this->full_update_every_ - 1;
+  this->at_update_ = partial ? (this->at_update_ + 1) : 0;
 
   if (partial)
     ESP_LOGI(TAG, "Performing partial e-paper update.");
